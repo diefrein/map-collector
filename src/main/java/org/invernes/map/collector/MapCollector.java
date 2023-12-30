@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.ResolvableType;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -19,7 +17,7 @@ import java.util.Map;
  *
  * @param <K> key type of the map
  * @param <V> value type of the map
- * @implNote For more information check the built-in implementations // todo link to impl
+ * @implNote  For use examples see tests org.invernes.map.collector.MapCollectorTest
  * @implSpec For correct usage extend this class with specific generic parameters:
  * class SomeClassMapCollector extends MapCollector&lt;Integer, SomeClass&gt;
  */
@@ -27,7 +25,6 @@ import java.util.Map;
 public abstract class MapCollector<K, V> implements BeanFactoryAware {
 
     private final Map<K, V> map = new HashMap<>();
-    private final Class<? extends Annotation> annotationClass;
 
     /**
      * @param beanFactory owning {@link BeanFactory} (never {@code null}).
@@ -36,11 +33,14 @@ public abstract class MapCollector<K, V> implements BeanFactoryAware {
      */
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        var annotatedBeans = getAnnotatedBeans(beanFactory, annotationClass);
+        var annotatedBeans = getAnnotatedBeans(beanFactory);
         for (var annotatedBeanEntry : annotatedBeans.entrySet()) {
             String beanName = annotatedBeanEntry.getKey();
             Object bean = annotatedBeanEntry.getValue();
-            putMapEntries(beanName, bean, beanFactory);
+            ResolvableType typeToCollect = getClassGenerics(this.getClass());
+            if (typeToCollect.isInstance(bean)) {
+                putMapEntries(beanName, bean, beanFactory);
+            }
         }
     }
 
@@ -62,13 +62,10 @@ public abstract class MapCollector<K, V> implements BeanFactoryAware {
     /**
      * Internal method to get beans with specified annotation
      *
-     * @param beanFactory     owning {@link BeanFactory}
-     * @param annotationClass type of specified annotation
+     * @param beanFactory owning {@link BeanFactory}
      * @return map of annotated beans with bean names as keys
      */
-    protected Map<String, Object> getAnnotatedBeans(BeanFactory beanFactory, Class<? extends Annotation> annotationClass) {
-        return ((ConfigurableListableBeanFactory) beanFactory).getBeansWithAnnotation(annotationClass);
-    }
+    protected abstract Map<String, Object> getAnnotatedBeans(BeanFactory beanFactory);
 
     /**
      * Internal method to put entries into map
