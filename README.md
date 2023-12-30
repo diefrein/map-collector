@@ -22,5 +22,5 @@ public Map<Integer, SomeType> someTypeMap(SomeType object1,
 ```
 <p>
 That is a good solution because Map.of() returns immutable map, and we are sure that object1, object2... are initialized when this factory method is executed.<br> 
-A problem occurres when the number of parameters grows. IDE marks that as warning and checkstyle complains about it, so you have to put @SupressWarning("ParameterNumber") on method, but that considered as bad practice in production code.
+A problem occurrs when the number of parameters grows. IDE marks that as warning and checkstyle complains about it, so you have to put @SupressWarning("ParameterNumber") on method, but that considered to be a bad practice in production code.
 </p>
