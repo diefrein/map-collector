@@ -119,7 +119,7 @@ public class MapCollectorBeanFactoryPostProcessor implements BeanFactoryPostProc
                               ConfigurableListableBeanFactory beanFactory) {
         String[] annotatedBeanNames = beanFactory.getBeanNamesForAnnotation(annotationClass);
         if (annotatedBeanNames.length == 0) {
-            throw new MapCollectorException("No beans with BusinessService annotation found");
+            throw new MapCollectorException(String.format("No beans with annotation of type %s found", annotationClass.getName()));
         }
         String[] beanNamesToCollect = beanFactory.getBeanNamesForType(dependencyType);
         List<String> actuallySetDependencies = new ArrayList<>();
