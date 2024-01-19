@@ -35,7 +35,7 @@ class MapCollectorBeanFactoryPostProcessorTest {
         when(beanFactory.getBeanNamesForType(MapCollector.class)).thenReturn(new String[]{});
 
         String expectedExceptionMessage = "No beans of type MapCollector found, but MapCollectorBeanFactoryPostProcessor is still used";
-        Exception exceptionThrown = assertThrows(MapCollectorException.class, () -> sut.postProcessBeanFactory(beanFactory));
+        Exception exceptionThrown = assertThrows(RuntimeException.class, () -> sut.postProcessBeanFactory(beanFactory));
         assertEquals(expectedExceptionMessage, exceptionThrown.getMessage());
 
         verify(beanFactory).getBeanNamesForType(MapCollector.class);
@@ -53,7 +53,7 @@ class MapCollectorBeanFactoryPostProcessorTest {
         when(beanFactory.getBeanDefinition(mapCollectorName)).thenReturn(mapCollectorBeanDefinition);
 
         String expectedExceptionMessage = String.format("No factory method for bean with name %s found", mapCollectorName);
-        Exception exceptionThrown = assertThrows(MapCollectorException.class, () -> sut.postProcessBeanFactory(beanFactory));
+        Exception exceptionThrown = assertThrows(RuntimeException.class, () -> sut.postProcessBeanFactory(beanFactory));
         assertEquals(expectedExceptionMessage, exceptionThrown.getMessage());
 
         verify(beanFactory).getBeanNamesForType(MapCollector.class);
@@ -77,7 +77,7 @@ class MapCollectorBeanFactoryPostProcessorTest {
         when(beanFactory.getBeanDefinition(factoryBeanName)).thenReturn(factoryBeanDefinition);
 
         String expectedExceptionMessage = String.format("No factory method for bean with name %s found", mapCollectorName);
-        Exception exceptionThrown = assertThrows(MapCollectorException.class, () -> sut.postProcessBeanFactory(beanFactory));
+        Exception exceptionThrown = assertThrows(RuntimeException.class, () -> sut.postProcessBeanFactory(beanFactory));
         assertEquals(expectedExceptionMessage, exceptionThrown.getMessage());
 
         verify(beanFactory).getBeanNamesForType(MapCollector.class);
@@ -105,7 +105,7 @@ class MapCollectorBeanFactoryPostProcessorTest {
         String[] annotatedBeanNames = new String[]{};
         when(beanFactory.getBeanNamesForAnnotation(annotationClass)).thenReturn(annotatedBeanNames);
 
-        assertThrows(MapCollectorException.class, () -> sut.postProcessBeanFactory(beanFactory));
+        assertThrows(RuntimeException.class, () -> sut.postProcessBeanFactory(beanFactory));
 
         verify(beanFactory).getBeanNamesForType(MapCollector.class);
         verify(beanFactory).getBeanDefinition(mapCollectorName);
