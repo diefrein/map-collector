@@ -45,22 +45,22 @@ public class MapCollectorBeanFactoryPostProcessor implements BeanFactoryPostProc
      * 4. Each bean found in p.3 is set as dependency of {@link MapCollector}
      *
      * @param beanFactory beanFactory, provided by Spring
-     * @throws MapCollectorException if context doesn't contain beans of type {@link MapCollector},
-     *                               if there are no fabric methods with which {@link MapCollector} are created,
-     *                               if there are no beans with annotation of type <i>annotationClass</i> found
+     * @throws RuntimeException if context doesn't contain beans of type {@link MapCollector},
+     *                          if there are no fabric methods with which {@link MapCollector} are created,
+     *                          if there are no beans with annotation of type <i>annotationClass</i> found
      */
     @Override
     public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
         String[] mapCollectorNames = beanFactory.getBeanNamesForType(MapCollector.class);
         if (mapCollectorNames.length == 0) {
-            throw new MapCollectorException("No beans of type MapCollector found, but MapCollectorBeanFactoryPostProcessor is still used");
+            throw new RuntimeException("No beans of type MapCollector found, but MapCollectorBeanFactoryPostProcessor is still used");
         }
         log.debug("{} beans of MapCollector type found", mapCollectorNames.length);
         for (String mapCollectorName : mapCollectorNames) {
             log.debug("Resolving dependencies for bean with name {}", mapCollectorName);
             Method factoryMethodForMapCollector = getFactoryMethodForBeanName(mapCollectorName, beanFactory);
             if (factoryMethodForMapCollector == null) {
-                throw new MapCollectorException(String.format("No factory method for bean with name %s found", mapCollectorName));
+                throw new RuntimeException(String.format("No factory method for bean with name %s found", mapCollectorName));
             }
             log.debug("Found factoryMethod for bean with name {}: {}", mapCollectorName, factoryMethodForMapCollector.getName());
             ResolvableType typeToCollect = getGenericReturnTypeOfMethod(factoryMethodForMapCollector);
@@ -119,7 +119,7 @@ public class MapCollectorBeanFactoryPostProcessor implements BeanFactoryPostProc
                               ConfigurableListableBeanFactory beanFactory) {
         String[] annotatedBeanNames = beanFactory.getBeanNamesForAnnotation(annotationClass);
         if (annotatedBeanNames.length == 0) {
-            throw new MapCollectorException(String.format("No beans with annotation of type %s found", annotationClass.getName()));
+            throw new RuntimeException(String.format("No beans with annotation of type %s found", annotationClass.getName()));
         }
         String[] beanNamesToCollect = beanFactory.getBeanNamesForType(dependencyType);
         List<String> actuallySetDependencies = new ArrayList<>();
