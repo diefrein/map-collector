@@ -1,5 +1,6 @@
 package org.invernes.map.collector;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -17,14 +18,14 @@ import java.util.Map;
  *
  * @param <K> key type of the map
  * @param <V> value type of the map
- * @implNote  For use examples see tests org.invernes.map.collector.MapCollectorTest
+ * @implNote For use examples see tests org.invernes.map.collector.MapCollectorTest
  * @implSpec For correct usage extend this class with specific generic parameters:
  * class SomeClassMapCollector extends MapCollector&lt;Integer, SomeClass&gt;
  */
 @RequiredArgsConstructor
 public abstract class MapCollector<K, V> implements BeanFactoryAware {
 
-    private final Map<K, V> map = new HashMap<>();
+    protected final Map<K, V> map = new HashMap<>();
 
     /**
      * @param beanFactory owning {@link BeanFactory} (never {@code null}).
@@ -32,7 +33,7 @@ public abstract class MapCollector<K, V> implements BeanFactoryAware {
      * @throws BeansException in case of initialization errors
      */
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
         var annotatedBeans = getAnnotatedBeans(beanFactory);
         for (var annotatedBeanEntry : annotatedBeans.entrySet()) {
             String beanName = annotatedBeanEntry.getKey();
