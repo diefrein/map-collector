@@ -1,10 +1,10 @@
 # map-collector
-<b>Service that provides collecting annotated beans to map at runtime.</b> 
+<b>Класс, собирающий аннотированные бины в мапу в рантайме.</b> 
 <p>
-Idea: annotate beans, that should be collected to a map, with an annotation, that defines with which key it will be stored.
+Идея: пометить бины, которые нужно собрать в мапу, аннотацией, поля которой будут определять ключ с которым бин будет сохранен в мапе.
 </p>
 <p>
-Example: assume we have a map, that looks like that
+  Пример: предположим имеется мапа следующего вида:
 </p>
 
 ``` java
@@ -21,6 +21,6 @@ public Map<Integer, SomeType> someTypeMap(SomeType object1,
 }
 ```
 <p>
-That is a good solution because Map.of() returns immutable map, and we are sure that object1, object2... are initialized when this factory method is executed.<br> 
-A problem occurrs when the number of parameters grows. IDE marks that as warning and checkstyle complains about it, so you have to put @SupressWarning("ParameterNumber") on method, but that considered to be a bad practice in production code.
+Определять мапу таким способом - хороший вариант, т.к. Map.of() возвращает immutable map, и при этом мы уверены, что object1, object2... уже инициализированы в момент вызова фабричного метода<br> 
+Проблема возникает, когда объектов становится много. Фабричный метод становится очень большим, на него ругается checkstyle, и в целом он выглядит неэстетично  
 </p>
